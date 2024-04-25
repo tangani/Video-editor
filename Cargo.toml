@@ -1,0 +1,19 @@
+[package]
+name = "video_editor"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+glib-sys = "^0"
+cairo-sys-rs = "=0.18.2"
+gdk-sys = "=0.18.0"
+
+gio-sys = "=0.18.1"
+gobject-sys = "^0"
+gtk = "^0"
+pango = "^0"
+gstreamer = "0.16.4"
+gstreamer-video = "0.16.4"
+glib = "^0"
