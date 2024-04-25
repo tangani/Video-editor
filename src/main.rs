@@ -1,37 +1,47 @@
-use gtk::prelude::*;
-use gtk::{Application, ApplicationWindow, Button};
-// use gstreamer::prelude::*;
-// use gstreamer::ElementFactory;
-// use gstreamer_video::VideoOverlayExt;
+use iced::{button, Button, Element, Sandbox, Settings, Text};
+use nfd2::Response;
 
-fn main() {
-    gtk::init().expect("Failed to initialize GTK.");
-    // gstreamer::init().expect("Failed to initialize GStreamer.");
+#[derive(Default)]
+pub struct FileDialog {
+    open_button_state: button::State,
+}
 
+#[derive(Debug, Clone)]
+pub enum Message {
+    Open,
+}
 
-    let application = Application::new(
-        Some("com.github.video_editor"),
-        Default::default(),
-    );
+impl Sandbox for FileDialog {
+    type Message = Message;
 
-    application.connect_activate(|app| {
-        let window = ApplicationWindow::new(app);
-        window.set_title("Video Editor");
-        window.set_default_size(800, 600);
-        window.show_all();
+    fn new() -> FileDialog {
+        FileDialog::default()
+    }
 
-        let button = Button::with_label("Click me!");
-        button.connect_clicked(|_| {
-            println!("Clicked!");
-        });
-        window.add(&button);
+    fn title(&self) -> String {
+        String::from("File Dialog")
+    }
 
-        window.show_all();
-    });
+    fn update(&mut self, message: Self::Message) {
+        match message {
+            Message::Open => {
+                let result = nfd2::open_file_dialog(None, None).unwrap();
+                match result {
+                    Response::Okay(file_path) => println!("File path: {:?}", file_path),
+                    Response::OkayMultiple(file_paths) => println!("File paths: {:?}", file_paths),
+                    Response::Cancel => println!("User canceled"),
+                }
+            }
+        }
+    }
 
-    application.run();
+    fn view(&mut self) -> Element<Message> {
+        Button::new(&mut self.open_button_state, Text::new("Open File"))
+            .on_press(Message::Open)
+            .into()
+    }
+}
 
-    // println!("GStreamer version: {}", gstreamer::version_string());
-
-    
+fn main() -> iced::Result {
+    FileDialog::run(Settings::default())
 }
